@@ -27,17 +27,17 @@ int main(int argc, char* argv[])
 
 	//test();
 
-	Camera camera = Camera(Vec3f(0, 1, 5), Vec3f(0, 1, 0), 1280, 720);     // Create camera
+	Camera camera = Camera(Vec3f(0, 1, 5), Vec3f(0, 1, 0), 640, 360);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
 																		// Add objects to scene
-	scene.add((new Sphere(Vec3f(0, -1000, 0), 1000, Material())));
+	scene.add(new Sphere(Vec3f(0, -1000, 0), 1000, Material()));
 	scene.add((new Sphere(Vec3f(-1004, 0, 0), 1000, Material(DIFF, Vec3f(0.85, 0.4, 0.4)))));
 	scene.add((new Sphere(Vec3f(1004, 0, 0) , 1000, Material(DIFF, Vec3f(0.4, 0.4, 0.85)))));
 	scene.add((new Sphere(Vec3f(0, 0, -1006), 1000, Material())));
-	scene.add((new Sphere(Vec3f(0, 110, 0)  , 100, Material(EMIT, Vec3f(1, 1, 1), Vec3f(2.2, 2.2, 2.2)))));
-	scene.add((new Sphere(Vec3f(-2, 1, 0)   , 1, Material(SPEC, Vec3f(1, 1, 1)))));
-	scene.add((new Sphere(Vec3f(2, 1, -0.5) , 1, Material(DIFF, Vec3f(1, 1, 1)))));
+	scene.add((new Sphere(Vec3f(0, 110, 0)  , 100 , Material(EMIT, Vec3f(1, 1, 1), Vec3f(2.2, 2.2, 2.2)))));
+	scene.add((new Sphere(Vec3f(-2, 1, 0)   , 1   , Material(SPEC, Vec3f(1, 1, 1)))));
+	scene.add((new Sphere(Vec3f(2, 1, -0.5) , 1   , Material(DIFF, Vec3f(1, 1, 1)))));
 	//scene.add( dynamic_cast<Object*>(new Mesh(Vec3f(), "../obj/dragon2.obj", Material(DIFF, Vec3f(0.9, 0.9, 0.9)))) );
 
 
@@ -46,6 +46,10 @@ int main(int argc, char* argv[])
 	renderer.save_image("render.png");              // Save image
 
 	clock_t timeend = clock();
-	cout << endl << "\ntime = " << double(timeend - timestart) / CLOCKS_PER_SEC;
+	double diff = double(timeend - timestart) / CLOCKS_PER_SEC;
+	int hrs = (int)diff / 3600;
+	int mins = ((int)diff / 60) - (hrs * 60);
+	float secs = diff - (hrs * 3600) - (mins * 60);
+	printf("\rRendering (%i samples): Complete!\nTime Taken: %i hrs, %i mins, %.2f secs\n\n", samples, hrs, mins, secs);
 	system("pause");
 }

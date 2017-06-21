@@ -24,7 +24,7 @@ public:
 		m_camera = camera;
 		m_pixel_buffer = new Vec3f[m_camera->width * m_camera->height];
 	}
-	void render(int samples = 4) {
+	void render(int samples) {
 		int width = m_camera->width;
 		int height = m_camera->height;
 		double samples_inv = 1. / samples;
