@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
 	//test();
 
-	Camera camera = Camera(Vec3f(0, 1, 5), Vec3f(0, 1, 0), 640, 360);     // Create camera
+	Camera camera = Camera(Vec3f(0, 1, 6), Vec3f(0, 1, 5), 640, 360);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
 																		// Add objects to scene

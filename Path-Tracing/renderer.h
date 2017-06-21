@@ -30,9 +30,9 @@ public:
 		double samples_inv = 1. / samples;
 
 		// Main Loop
-//#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
+#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
 		for (int y = 0; y<height; y++) {
-			ushort Xi[3] = { 0,0,y*y*y };               // Stores seed for erand48
+			const ushort Xi[3] = { 0,0,y*y*y };               // Stores seed for erand48
 
 			fprintf(stderr, "\rRendering (%i samples): %.2f%% ",      // Prints
 				samples, (double)y / height * 100);                   // progress

@@ -3,6 +3,7 @@
 #include "vector.h"
 #include "ray.h"
 #include <random>
+#include <ctime>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -36,7 +37,7 @@ public:
 		return color;
 	}
 
-	Ray get_reflected_ray(const Ray &ray, Vec3f &hitpoint, const Vec3f &norm, ushort *Xi) const {
+	Ray get_reflected_ray(const Ray &ray, Vec3f &hitpoint, const Vec3f &norm, const ushort *Xi) const {
 		static std::default_random_engine generator;
 		static std::uniform_real_distribution<double> halfuni(-0.5, 0.5);
 		static std::uniform_real_distribution<double> uni(0, 1);

@@ -6,6 +6,7 @@
 #include "util.h"
 #include "erand48.h"
 #include <algorithm>
+#include <random>
 
 
 class Scene {
@@ -28,7 +29,7 @@ public:
 		}
 		return isintersect;
 	}
-	Vec3f trace_ray(const Ray &ray, int depth, ushort*Xi) {
+	Vec3f trace_ray(const Ray &ray, int depth, const ushort*Xi) {
 		ObjectIntersection isct = intersect(ray);
 
 		// If no hit, return world colour
@@ -49,7 +50,9 @@ public:
 
 		// Russian roulette termination.
 		// If random number between 0 and 1 is > p, terminate and return hit object's emmission
-		double rnd = erand48(Xi);
+		static std::default_random_engine generator;
+		static std::uniform_real_distribution<double> uni(0, 1);
+		double rnd = uni(generator);
 		if (++depth>5) {
 			if (rnd<p*0.9) { // Multiply by 0.9 to avoid infinite loop with colours of 1.0
 				color = color*(0.9 / p);
