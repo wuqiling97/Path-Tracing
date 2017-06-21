@@ -49,11 +49,11 @@ public:
 			}
 		}
 	}
-	void save_image(const char * file_path) {
+	void save_image(std::string file_path) {
 		int width = m_camera->width;
 		int height = m_camera->height;
 
-		std::ofstream ofs("./image.ppm", std::ios::out | std::ios::binary);
+		std::ofstream ofs(file_path, std::ios::out | std::ios::binary);
 		ofs << "P6\n" << width << " " << height << "\n255\n";
 		for (int i = 0; i < width*height; i++) {
 			ofs<<uchar(toInt(m_pixel_buffer[i].x))

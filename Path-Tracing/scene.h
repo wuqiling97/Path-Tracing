@@ -50,7 +50,7 @@ public:
 
 		// Russian roulette termination.
 		// If random number between 0 and 1 is > p, terminate and return hit object's emmission
-		static std::default_random_engine generator;
+		static std::default_random_engine generator(time(0)+2);
 		static std::uniform_real_distribution<double> uni(0, 1);
 		double rnd = uni(generator);
 		if (++depth>5) {

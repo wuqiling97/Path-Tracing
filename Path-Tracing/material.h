@@ -38,13 +38,13 @@ public:
 	}
 
 	Ray get_reflected_ray(const Ray &ray, Vec3f &hitpoint, const Vec3f &norm, const ushort *Xi) const {
-		static std::default_random_engine generator;
+		static std::default_random_engine generator(time(0)+1);
 		static std::uniform_real_distribution<double> halfuni(-0.5, 0.5);
 		static std::uniform_real_distribution<double> uni(0, 1);
 
 		// Ideal specular reflection
 		if (type == SPEC) {
-			double roughness = 0.2;
+			double roughness = 0;
 			Vec3f reflect_ray = ray.direction - norm * 2 * norm.dot(ray.direction);
 			reflect_ray = (reflect_ray + 
 				roughness * Vec3f(halfuni(generator), halfuni(generator), halfuni(generator)));

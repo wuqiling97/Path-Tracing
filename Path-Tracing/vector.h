@@ -52,4 +52,4 @@ public:
 	}
 };
 
-typedef Vec3<float> Vec3f;
+typedef Vec3<double> Vec3f;

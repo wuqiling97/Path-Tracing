@@ -27,23 +27,23 @@ int main(int argc, char* argv[])
 
 	//test();
 
-	Camera camera = Camera(Vec3f(0, 1, 6), Vec3f(0, 1, 5), 640, 360);     // Create camera
+	Camera camera = Camera(Vec3f(0, 1, 3), Vec3f(0, 0, -1), 640, 360);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
 																		// Add objects to scene
 	scene.add(new Sphere(Vec3f(0, -1000, 0), 1000, Material()));
-	scene.add((new Sphere(Vec3f(-1004, 0, 0), 1000, Material(DIFF, Vec3f(0.85, 0.4, 0.4)))));
-	scene.add((new Sphere(Vec3f(1004, 0, 0) , 1000, Material(DIFF, Vec3f(0.4, 0.4, 0.85)))));
-	scene.add((new Sphere(Vec3f(0, 0, -1006), 1000, Material())));
-	scene.add((new Sphere(Vec3f(0, 110, 0)  , 100 , Material(EMIT, Vec3f(1, 1, 1), Vec3f(2.2, 2.2, 2.2)))));
-	scene.add((new Sphere(Vec3f(-2, 1, 0)   , 1   , Material(SPEC, Vec3f(1, 1, 1)))));
-	scene.add((new Sphere(Vec3f(2, 1, -0.5) , 1   , Material(DIFF, Vec3f(1, 1, 1)))));
+	scene.add(new Sphere(Vec3f(-1004, 0, 0), 1000, Material(DIFF, Vec3f(0.85, 0.4, 0.4))));
+	scene.add(new Sphere(Vec3f(1004, 0, 0) , 1000, Material(DIFF, Vec3f(0.4, 0.4, 0.85))));
+	scene.add(new Sphere(Vec3f(0, 0, -1006), 1000, Material()));
+	scene.add(new Sphere(Vec3f(0, 110, 0)  , 100 , Material(EMIT, Vec3f(1, 1, 1), Vec3f(2.2, 2.2, 2.2))));
+	scene.add(new Sphere(Vec3f(-1.3, 0.7, 0)   , 0.7   , Material(SPEC, Vec3f(1, 1, 1))));
+	scene.add(new Sphere(Vec3f(1.3, 0.7, -0.5) , 0.7   , Material(DIFF, Vec3f(1, 1, 1))));
 	//scene.add( dynamic_cast<Object*>(new Mesh(Vec3f(), "../obj/dragon2.obj", Material(DIFF, Vec3f(0.9, 0.9, 0.9)))) );
 
 
 	Renderer renderer = Renderer(&scene, &camera);  // Create renderer with our scene and camera
 	renderer.render(samples);                       // Render image to pixel buffer
-	renderer.save_image("render.png");              // Save image
+	renderer.save_image("image.ppm");              // Save image
 
 	clock_t timeend = clock();
 	double diff = double(timeend - timestart) / CLOCKS_PER_SEC;
