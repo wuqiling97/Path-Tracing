@@ -42,13 +42,13 @@ int main(int argc, char* argv[])
 	scene.add(new Sphere(Vec3f(1004, 0, 0) , 1000, Material(DIFF, Vec3f(0.4, 0.4, 0.85))));
 	scene.add(new Sphere(Vec3f(0, 0, -1006), 1000, Material()));
 	scene.add(new Sphere(Vec3f(0, 110, 0)  , 100 , Material(EMIT, Vec3f(1, 1, 1), Vec3f(2.2, 2.2, 2.2))));
-	scene.add(new Sphere(Vec3f(-1.7, 0.7, 0)   , 0.7   , Material(SPEC, Vec3f(1, 1, 1))));
+	scene.add(new Sphere(Vec3f(-1.7, 1, 0)   , 1   , Material(SPEC, Vec3f(1, 1, 1)), "tex/marble.jpg"));
 	scene.add(new Sphere(Vec3f(1.7, 0.7, -0.5) , 0.7   , Material(DIFF, Vec3f(1, 1, 1))));
 	Vector3d pts[4] = {
-		Vector3d(0.303, 0.000, 0),
-		Vector3d(2.000, 1.645, 0),
-		Vector3d(0.145, 1.934, 0),
-		Vector3d(0.184, 3.382, 0)
+		Vector3d(0.338, 0.000, 0),
+		Vector3d(1.600, 1.523, 0),
+		Vector3d(0.000, 1.862, 0),
+		Vector3d(0.446, 3.385, 0)
 	};
 	scene.add(new Bezier<3>(Vec3f(0.5, 0, 0.4), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
 

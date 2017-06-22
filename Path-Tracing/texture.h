@@ -4,6 +4,7 @@
 #include <opencv2/highgui.hpp>
 #include <vector>
 #include <cmath>
+#include <stdexcept>
 
 #include "vector.h"
 #include "util.h"
@@ -26,6 +27,7 @@ public:
 
 		Mat img = cv::imread(filepath);
 		if (img.data != nullptr) {
+			cout<<"texture "<<filepath<<" loaded\n";
 			loaded = true;
 			width = img.cols;
 			height = img.rows;
@@ -40,9 +42,15 @@ public:
 	}
 	inline bool isload() { return loaded; }
 	Vec3f getcolor(double u, double v) {
-		myassert(loaded);
+		//myassert(loaded);
 		int i = round(clamp(u) * (width-1));
 		int j = round(clamp(v) * (height-1));
-		return pixels[i*width + j];
+		if (i >= 0 && i < width && j >= 0 && j < height) {
+			return pixels[i*width + j];
+		} else {
+			printf("error with uv, yx: %.7lf, %.7lf - %i, %i (width, height: %i, %i) \n", u, v, i, j, width, height);
+			return Vec3f(0, 1, 0);
+		}
+
 	}
 };

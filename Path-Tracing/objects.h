@@ -33,14 +33,14 @@ protected:
 	Texture m_texture;
 	Material m_material;	// Material
 	Vec3f m_pos; // Position
-public:
 	// Get color at UV coordinates u,v
 	Vec3f get_uvcolor(double u, double v) {
-		if (m_texture.isload())
+		if(m_texture.isload())
 			return m_texture.getcolor(u, v);
 		else
 			return m_material.color;
 	}
+public:
 	Object(Vec3f pos, Material material, std::string texpath) : 
 		m_pos(pos), m_material(material), m_texture(Texture(texpath)){}
 	virtual ObjectIntersection get_intersection(const Ray &r) = 0;
@@ -62,7 +62,6 @@ public:
 	// Check if ray intersects with sphere. Returns ObjectIntersection data structure
 	ObjectIntersection get_intersection(const Ray &ray) {
 		// Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0
-		bool hit = false;
 		double distance = 0;
 		Vec3f n = Vec3f();
 
@@ -70,7 +69,7 @@ public:
 		double t, eps = 1e-4;
 		double tp = l.dot(ray.direction), det = m_radius*m_radius - (l.dot(l) - tp*tp);
 		if (det<0) // center, ray distance > r
-			return ObjectIntersection(hit);
+			return ObjectIntersection(false);
 		else 
 			det = sqrt(det);
 
@@ -88,13 +87,19 @@ public:
 
 		Vec3f hitpoint;
 		if (distance != 0) {
-			hit = true;
+			bool hit = true;
 			hitpoint = ray.origin + ray.direction * distance;
 			n = (hitpoint - m_pos).norm();
 			if(inside) n = -n;
-		}
 
-		return ObjectIntersection(hit, distance, n, hitpoint, m_material);
+			double u = atan((hitpoint.y - m_pos.y) / (hitpoint.x - m_pos.x)) / M_PI + 0.5;
+			double v = asin(clamp((hitpoint.z - m_pos.z) / m_radius)) / M_PI + 0.5;
+			m_material.color = get_uvcolor(u, v);
+
+			return ObjectIntersection(hit, distance, n, hitpoint, m_material);
+		} else
+			return ObjectIntersection(false);
+
 	}
 };
 
@@ -107,7 +112,7 @@ private:
 	AABBox box;
 public:
 	Bezier(Vec3f pos, Eigen::Vector3d points[], Material material, std::string texpath = "") : 
-		Object(pos, material, texpath), m_material(material)  {
+		Object(pos, material, texpath) {
 		using Eigen::Vector3d;
 
 		std::vector<Vector3d> boxpts;
