@@ -28,7 +28,7 @@ public:
 		}
 		return isintersect;
 	}
-	Vec3f trace_ray(const Ray &ray, int depth, const ushort*Xi) {
+	Vec3f trace_ray(const Ray &ray, int depth) {
 		ObjectIntersection isct = intersect(ray);
 
 		// If no hit, return world colour
@@ -60,9 +60,9 @@ public:
 			}
 		}
 
-		Ray reflected = isct.material.get_reflected_ray(ray, isct.hitp, isct.n, Xi);
+		Ray reflected = isct.material.get_reflected_ray(ray, isct.hitp, isct.n);
 
-		return color.mult(trace_ray(reflected, depth, Xi));
+		return color.mult(trace_ray(reflected, depth));
 	}
 };
 

@@ -36,7 +36,7 @@ public:
 		m_spacing_half = m_spacing * 0.5;
 	}
 	// Returns ray from camera origin through pixel at x,y
-	Ray get_ray(int x, int y, bool jitter, const ushort* Xi)
+	Ray get_ray(int x, int y, bool jitter)
 	{
 		static std::default_random_engine generator(time(0));
 		static std::uniform_real_distribution<double> uni(-1.5, 1.5);

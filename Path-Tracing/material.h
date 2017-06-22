@@ -36,7 +36,7 @@ public:
 		return color;
 	}
 
-	Ray get_reflected_ray(const Ray &ray, Vec3f &hitpoint, const Vec3f &norm, const ushort *Xi) const {
+	Ray get_reflected_ray(const Ray &ray, Vec3f &hitpoint, const Vec3f &norm) const {
 		static std::default_random_engine generator(time(0)+1);
 		static std::uniform_real_distribution<double> halfuni(-0.5, 0.5);
 		static std::uniform_real_distribution<double> uni(0, 1);

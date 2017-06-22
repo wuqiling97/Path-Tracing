@@ -156,6 +156,7 @@
     <ClCompile Include="rand48\rand48.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aabbox.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="objects.h" />

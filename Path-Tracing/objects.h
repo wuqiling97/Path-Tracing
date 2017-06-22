@@ -1,11 +1,14 @@
 #pragma once
 
-#include "vector.h"
-#include "material.h"
-#include "util.h"
 #include <Eigen/Dense>
 #include <cmath>
 #include <iostream>
+#include <vector>
+
+#include "vector.h"
+#include "material.h"
+#include "util.h"
+#include "aabbox.h"
 
 using std::cout; using std::endl;
 
@@ -91,11 +94,22 @@ class Bezier : public Object
 private:
 	std::vector<Eigen::Vector3d> m_points; // 相对m_pos的坐标
 	Material m_material;
+	AABBox box;
 public:
 	Bezier(Vec3f pos, Eigen::Vector3d points[], Material material) : 
-		Object(pos), m_material(material) {
-		for(int i=0; i<=degree; i++)
+		Object(pos), m_material(material)  {
+		using Eigen::Vector3d;
+
+		std::vector<Vector3d> boxpts;
+		Vector3d vpos = pos.toeigen();
+		for (int i = 0; i <= degree; i++) {
 			m_points.push_back(points[i]);
+			Vector3d& p = points[i];
+			// 传入控制点的对称位置
+			boxpts.push_back(Vector3d(-p[0], p[1], -p[0]) + vpos);
+			boxpts.push_back(Vector3d(p[0], p[1], p[0]) + vpos);
+		}
+		box.expand(boxpts);
 	}
 	Eigen::Vector3d _get_point(double t, std::vector<Eigen::Vector3d>& points) {
 		//if(points.size()==1)
@@ -130,7 +144,11 @@ public:
 	ObjectIntersection get_intersection(const Ray& ray) {
 		using namespace Eigen;
 
-		//TODO: t的初值选择与包围盒的交点
+		double boxt = box.intersect_box(ray);
+		if (boxt == 0) {
+			return ObjectIntersection(false);
+		}
+		//cout<<"boxt = "<<boxt<<endl;
 
 		// 平移bezier曲线到原点
 		Vector3d rayori = ray.origin.toeigen() - m_pos.toeigen();
@@ -138,6 +156,19 @@ public:
 
 		Vector3d point(0, 0.5, M_PI);
 		double &t = point[0], &u = point[1], &v = point[2];
+		t = boxt;
+		Vector3d boxp = rayori + t*raydir; // 与包围盒的交点
+		double &x = boxp[2], &y = boxp[0];
+		// 设置v的初值为包围盒交点的角度
+		if (x > 0) {
+			if (y > 0)
+				v = atan(y/x);
+			else
+				v = atan(y/x) + 2*M_PI;
+		} else {
+			v = atan(y/x) + M_PI;
+		}
+
 		double tprev = 0;
 		double eps = 1e-4;
 		Matrix3d Jmat; // jacobi matrix
@@ -166,7 +197,7 @@ public:
 				normal = (dfdu % dfdv).norm();
 				if(ray.direction.dot(normal) >= 0)
 					normal = -normal;
-				hitp = Vec3f(fvalue);
+				hitp = ray.origin + t*ray.direction;
 
 				/*cout<<"iter time = "<<i<<endl;
 				cout<<"parameter = "<<point<<endl;*/

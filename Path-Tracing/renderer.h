@@ -31,8 +31,7 @@ public:
 
 		// Main Loop
 #pragma omp parallel for schedule(dynamic, 1)       // OpenMP
-		for (int y = 0; y<height; y++) {
-			const ushort Xi[3] = { 0,0,y*y*y };               // Stores seed for erand48
+		for (int y = 0; y<height; y++) {             // Stores seed for erand48
 
 			fprintf(stderr, "\rRendering (%i samples): %.2f%% ",      // Prints
 				samples, (double)y / height * 100);                   // progress
@@ -41,11 +40,14 @@ public:
 				Vec3f color = Vec3f();
 
 				for (int a = 0; a<samples; a++) {
-					Ray ray = m_camera->get_ray(x, y, a>0, Xi);
-					color = color + m_scene->trace_ray(ray, 0, Xi);
+					Ray ray = m_camera->get_ray(x, y, a>0);
+					color = color + m_scene->trace_ray(ray, 0);
 				}
 
 				m_pixel_buffer[(y)*width + x] = color * samples_inv;
+
+				/*if(abs(x-320)<=1 && abs(y-180)<=1)
+					m_pixel_buffer[(y)*width + x] = Vec3f(1, 0, 0);*/
 			}
 		}
 	}

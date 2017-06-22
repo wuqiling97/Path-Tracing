@@ -6,6 +6,10 @@ using std::cout; using std::cin; using std::endl;
 
 // 使用的坐标系: x向右, y向上, z向前
 
+#define private public
+#include "objects.h"
+#include "aabbox.h"
+
 #include "vector.h"
 #include "camera.h"
 #include "scene.h"
@@ -29,10 +33,10 @@ int main(int argc, char* argv[])
 
 	//test();
 
-	Camera camera = Camera(Vec3f(0, 3, 5), Vec3f(0, -0.2, -1), 640, 360);     // Create camera
+	Camera camera = Camera(Vec3f(0, 2, 5), Vec3f(0, 0, -1), 640, 360);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
-																		// Add objects to scene
+	// Add objects to scene
 	scene.add(new Sphere(Vec3f(0, -1000, 0), 1000, Material()));
 	scene.add(new Sphere(Vec3f(-1004, 0, 0), 1000, Material(DIFF, Vec3f(0.85, 0.4, 0.4))));
 	scene.add(new Sphere(Vec3f(1004, 0, 0) , 1000, Material(DIFF, Vec3f(0.4, 0.4, 0.85))));
@@ -46,7 +50,16 @@ int main(int argc, char* argv[])
 		Vector3d(0.145, 1.934, 0),
 		Vector3d(0.184, 3.382, 0)
 	};
-	scene.add(new Bezier<3>(Vec3f(0.4, 0, 0.5), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
+	scene.add(new Bezier<3>(Vec3f(0, 0, 0), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
+
+	//Ray ray = camera.get_ray(320, 180, 0);
+	//cout<<ray.origin<<' '<<ray.direction<<endl;
+	//
+	//Bezier<3> obj = Bezier<3>(Vec3f(0, 0, 0), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4)));
+	//ObjectIntersection inter =  obj.get_intersection(ray);
+	//cout<<inter.hit<<' '<<inter.t<<endl
+	//	<<inter.hitp<<' '<<inter.n<<endl;
+
 
 	Renderer renderer = Renderer(&scene, &camera);  // Create renderer with our scene and camera
 	renderer.render(samples);                       // Render image to pixel buffer
