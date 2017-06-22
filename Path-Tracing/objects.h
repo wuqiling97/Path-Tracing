@@ -127,18 +127,6 @@ public:
 		tmp2.pop_back();
 		return degree*(_get_point(t, tmp1) - _get_point(t, tmp2));
 	}
-	Eigen::Matrix3d Jacobi(Eigen::Vector3d pt, const Vec3f& raydir) {
-		// t: pt[0], u: pt[1], v: pt[2]
-		double &t = pt[0], &u = pt[1], &v = pt[2];
-		Eigen::Vector3d deri = get_derivative(u);
-		Eigen::Vector3d bezier_pt = get_point(u);
-		Eigen::Matrix3d ret; // jacobi matrix
-		ret <<
-			raydir.x, deri.x()*sin(v), bezier_pt.x()*cos(v), 
-			raydir.y, deri.y(),        0, 
-			raydir.z, deri.x()*cos(v), bezier_pt.x()*(-sin(v));
-		return ret;
-	}
 	ObjectIntersection get_intersection(const Ray& ray) {
 		using namespace Eigen;
 
@@ -155,7 +143,7 @@ public:
 		Matrix3d Jmat; // jacobi matrix
 		Vector3d fvalue; //f(t, u, v) = S(u, v)-C(t)
 		bool ishit = false;
-		Vec3f normal;
+		Vec3f normal, hitp;
 
 		// Å£µüÇó½ât, u, v
 		for (int i = 0; ; i++) {
@@ -172,14 +160,16 @@ public:
 			point = point - Jmat.inverse() * fvalue;
 			if (abs(tprev - t) < 1e-7) {
 				ishit = true;
-				//cout<<"iter time = "<<i<<endl;
 				// caculate normal
 				Vec3f dfdu(Jmat(0,1), Jmat(1,1), Jmat(2,1));
 				Vec3f dfdv(Jmat(0,2), Jmat(1,2), Jmat(2,2));
 				normal = (dfdu % dfdv).norm();
 				if(ray.direction.dot(normal) >= 0)
 					normal = -normal;
+				hitp = Vec3f(fvalue);
 
+				/*cout<<"iter time = "<<i<<endl;
+				cout<<"parameter = "<<point<<endl;*/
 				break;
 			}
 			if (i > 20) {
@@ -191,8 +181,8 @@ public:
 		myassert(v >= 0 && v <= 2*M_PI);
 
 		if (ishit && t > eps && u >= 0 && u <= 1) {
-			Vec3f hitp = Vec3f(point) + m_pos;
-			normal = normal + m_pos;
+			hitp += m_pos;
+			//normal = normal + m_pos;
 			return ObjectIntersection(true, t, normal, hitp, m_material);
 		} else
 			return ObjectIntersection(false);

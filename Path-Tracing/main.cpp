@@ -40,13 +40,13 @@ int main(int argc, char* argv[])
 	scene.add(new Sphere(Vec3f(0, 110, 0)  , 100 , Material(EMIT, Vec3f(1, 1, 1), Vec3f(2.2, 2.2, 2.2))));
 	scene.add(new Sphere(Vec3f(-1.7, 0.7, 0)   , 0.7   , Material(SPEC, Vec3f(1, 1, 1))));
 	scene.add(new Sphere(Vec3f(1.7, 0.7, -0.5) , 0.7   , Material(DIFF, Vec3f(1, 1, 1))));
-	/*Vector3d pts[4] = {
-		Vector3d(0.454, 0.000, 0),
-		Vector3d(3.000, 2.467, 0),
-		Vector3d(0.217, 2.901, 0),
-		Vector3d(0.276, 5.072, 0)
+	Vector3d pts[4] = {
+		Vector3d(0.303, 0.000, 0),
+		Vector3d(2.000, 1.645, 0),
+		Vector3d(0.145, 1.934, 0),
+		Vector3d(0.184, 3.382, 0)
 	};
-	scene.add(new Bezier<3>(Vec3f(0, 1, 0.5), pts, Material(DIFF, Vec3f(0.4, 0.85, 0.4))));*/
+	scene.add(new Bezier<3>(Vec3f(0.4, 0, 0.5), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
 
 	Renderer renderer = Renderer(&scene, &camera);  // Create renderer with our scene and camera
 	renderer.render(samples);                       // Render image to pixel buffer
