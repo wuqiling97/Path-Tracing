@@ -169,7 +169,6 @@ public:
 			v = atan(y/x) + M_PI;
 		}
 
-		double tprev = 0;
 		double eps = 1e-4;
 		Matrix3d Jmat; // jacobi matrix
 		Vector3d fvalue; //f(t, u, v) = S(u, v)-C(t)
@@ -187,9 +186,15 @@ public:
 			fvalue = Vector3d(bezier_pt.x()*sin(v), bezier_pt.y(), bezier_pt.x() * cos(v))
 				- (rayori + t * raydir);
 
-			tprev = t;
 			point = point - Jmat.inverse() * fvalue;
-			if (abs(tprev - t) < 1e-7) {
+
+			bool converge = true;
+			for(int i=0; i<3; i++)
+				if (abs(fvalue[i]) > 1e-7) {
+					converge = false;
+					break;
+				}
+			if (converge) {
 				ishit = true;
 				// caculate normal
 				Vec3f dfdu(Jmat(0,1), Jmat(1,1), Jmat(2,1));
@@ -199,8 +204,9 @@ public:
 					normal = -normal;
 				hitp = ray.origin + t*ray.direction;
 
-				/*cout<<"iter time = "<<i<<endl;
-				cout<<"parameter = "<<point<<endl;*/
+				//cout<<"iter time = "<<i<<endl;
+				//cout<<"parameter = "<<point<<endl;
+				//cout<<"fvalue = \n"<<fvalue<<endl;
 				break;
 			}
 			if (i > 20) {

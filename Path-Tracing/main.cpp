@@ -52,11 +52,12 @@ int main(int argc, char* argv[])
 	};
 	scene.add(new Bezier<3>(Vec3f(0, 0, 0), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
 
-	//Ray ray = camera.get_ray(320, 180, 0);
+	//Ray ray = camera.get_ray(202, 184, 0);
 	//cout<<ray.origin<<' '<<ray.direction<<endl;
 	//
 	//Bezier<3> obj = Bezier<3>(Vec3f(0, 0, 0), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4)));
 	//ObjectIntersection inter =  obj.get_intersection(ray);
+	//cout<<"\nintersection info\n";
 	//cout<<inter.hit<<' '<<inter.t<<endl
 	//	<<inter.hitp<<' '<<inter.n<<endl;
 
