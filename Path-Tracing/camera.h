@@ -6,8 +6,8 @@
 #include <random>
 #include <ctime>
 
-class Camera {
-
+class Camera
+{
 private:
 	double m_width_inv; // 1/width
 	double m_height_inv;

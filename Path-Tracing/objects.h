@@ -78,3 +78,7 @@ public:
 	}
 };
 
+class Bezier : public Object
+{
+
+};
