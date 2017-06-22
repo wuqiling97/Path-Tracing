@@ -4,7 +4,6 @@
 #include "vector.h"
 #include "objects.h"
 #include "util.h"
-#include "erand48.h"
 #include <algorithm>
 #include <random>
 

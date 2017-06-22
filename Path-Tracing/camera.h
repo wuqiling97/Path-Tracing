@@ -54,7 +54,7 @@ public:
 			y_jitter = 0;
 		}
 
-		Vec3f raydir = m_direction*1.5 + (
+		Vec3f raydir = m_direction*1.7 + (
 			(2 * x*m_width_inv - 1 + x_jitter) * m_ratio * m_x_direction +
 			(1 - 2 * y*m_height_inv + y_jitter) * m_y_direction);
 

@@ -9,3 +9,15 @@ typedef unsigned short ushort;
 typedef unsigned int uint;
 typedef long long int64;
 typedef unsigned long long uint64;
+
+class Exception
+{};
+
+void _assert_fail(const char* exp)
+{
+	using std::cout;
+	cout << "Assertion fail:  " << exp << endl;
+	throw Exception();
+}
+
+#define myassert(exp) if(!(exp)) { _assert_fail(#exp);}

@@ -5,6 +5,9 @@
 #include "util.h"
 #include <Eigen/Dense>
 #include <cmath>
+#include <iostream>
+
+using std::cout; using std::endl;
 
 struct ObjectIntersection 
 {
@@ -15,8 +18,8 @@ struct ObjectIntersection
 	Material material;	// Material of intersected face
 
 	ObjectIntersection(
-		bool hit_, double t_ = 0, Vec3f n_ = Vec3f(), Vec3f hitp_ = Vec3f(), Material m_ = Material()
-	) : hit(hit_), t(t_), n(n_), hitp(hitp_), material(m_) {}
+		bool hit_, double t_ = 0, Vec3f n_ = Vec3f(), Vec3f hitpoint_ = Vec3f(), Material m_ = Material()
+	) : hit(hit_), t(t_), n(n_), hitp(hitpoint_), material(m_) {}
 };
 
 
@@ -81,16 +84,16 @@ public:
 	}
 };
 
-using namespace Eigen;
 
 template <int degree> // 次数
 class Bezier : public Object
 {
 private:
 	std::vector<Eigen::Vector3d> m_points; // 相对m_pos的坐标
-
+	Material m_material;
 public:
-	Bezier(Vec3f pos, Eigen::Vector3d points[]) : Object(pos) {
+	Bezier(Vec3f pos, Eigen::Vector3d points[], Material material) : 
+		Object(pos), m_material(material) {
 		for(int i=0; i<=degree; i++)
 			m_points.push_back(points[i]);
 	}
@@ -137,6 +140,7 @@ public:
 		return ret;
 	}
 	ObjectIntersection get_intersection(const Ray& ray) {
+		using namespace Eigen;
 
 		//TODO: t的初值选择与包围盒的交点
 
@@ -144,12 +148,14 @@ public:
 		Vector3d rayori = ray.origin.toeigen() - m_pos.toeigen();
 		Vector3d raydir = ray.direction.toeigen();
 
-		Vector3d point(0, 0,5, M_PI);
+		Vector3d point(0, 0.5, M_PI);
 		double &t = point[0], &u = point[1], &v = point[2];
 		double tprev = 0;
 		double eps = 1e-4;
 		Matrix3d Jmat; // jacobi matrix
 		Vector3d fvalue; //f(t, u, v) = S(u, v)-C(t)
+		bool ishit = false;
+		Vec3f normal;
 
 		// 牛迭求解t, u, v
 		for (int i = 0; ; i++) {
@@ -165,17 +171,30 @@ public:
 			tprev = t;
 			point = point - Jmat.inverse() * fvalue;
 			if (abs(tprev - t) < 1e-7) {
+				ishit = true;
+				//cout<<"iter time = "<<i<<endl;
+				// caculate normal
+				Vec3f dfdu(Jmat(0,1), Jmat(1,1), Jmat(2,1));
+				Vec3f dfdv(Jmat(0,2), Jmat(1,2), Jmat(2,2));
+				normal = (dfdu % dfdv).norm();
+				if(ray.direction.dot(normal) >= 0)
+					normal = -normal;
+
 				break;
 			}
 			if (i > 20) {
+				ishit = false;
 				break;
 			}
 		}
 		v = v - floor(v/(2 * M_PI)) * 2 * M_PI;
-		CV_Assert(v >= 0 && v <= 2*M_PI);
+		myassert(v >= 0 && v <= 2*M_PI);
 
-		Vec3f hitp = Vec3f(point) + m_pos;
-		if(t>eps && u>=0 && u<=1)
-			return ObjectIntersection(true, )
+		if (ishit && t > eps && u >= 0 && u <= 1) {
+			Vec3f hitp = Vec3f(point) + m_pos;
+			normal = normal + m_pos;
+			return ObjectIntersection(true, t, normal, hitp, m_material);
+		} else
+			return ObjectIntersection(false);
 	}
 };

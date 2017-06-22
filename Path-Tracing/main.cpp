@@ -20,6 +20,8 @@ void test()
 
 int main(int argc, char* argv[])
 {
+	using Eigen::Vector3d;
+
 	clock_t timestart = clock();
 
 	int samples = 10;
@@ -27,7 +29,7 @@ int main(int argc, char* argv[])
 
 	//test();
 
-	Camera camera = Camera(Vec3f(0, 1, 3), Vec3f(0, 0, -1), 640, 360);     // Create camera
+	Camera camera = Camera(Vec3f(0, 3, 5), Vec3f(0, -0.2, -1), 640, 360);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
 																		// Add objects to scene
@@ -36,10 +38,15 @@ int main(int argc, char* argv[])
 	scene.add(new Sphere(Vec3f(1004, 0, 0) , 1000, Material(DIFF, Vec3f(0.4, 0.4, 0.85))));
 	scene.add(new Sphere(Vec3f(0, 0, -1006), 1000, Material()));
 	scene.add(new Sphere(Vec3f(0, 110, 0)  , 100 , Material(EMIT, Vec3f(1, 1, 1), Vec3f(2.2, 2.2, 2.2))));
-	scene.add(new Sphere(Vec3f(-1.3, 0.7, 0)   , 0.7   , Material(SPEC, Vec3f(1, 1, 1))));
-	scene.add(new Sphere(Vec3f(1.3, 0.7, -0.5) , 0.7   , Material(DIFF, Vec3f(1, 1, 1))));
-	//scene.add( dynamic_cast<Object*>(new Mesh(Vec3f(), "../obj/dragon2.obj", Material(DIFF, Vec3f(0.9, 0.9, 0.9)))) );
-
+	scene.add(new Sphere(Vec3f(-1.7, 0.7, 0)   , 0.7   , Material(SPEC, Vec3f(1, 1, 1))));
+	scene.add(new Sphere(Vec3f(1.7, 0.7, -0.5) , 0.7   , Material(DIFF, Vec3f(1, 1, 1))));
+	/*Vector3d pts[4] = {
+		Vector3d(0.454, 0.000, 0),
+		Vector3d(3.000, 2.467, 0),
+		Vector3d(0.217, 2.901, 0),
+		Vector3d(0.276, 5.072, 0)
+	};
+	scene.add(new Bezier<3>(Vec3f(0, 1, 0.5), pts, Material(DIFF, Vec3f(0.4, 0.85, 0.4))));*/
 
 	Renderer renderer = Renderer(&scene, &camera);  // Create renderer with our scene and camera
 	renderer.render(samples);                       // Render image to pixel buffer
