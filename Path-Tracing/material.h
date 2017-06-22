@@ -3,7 +3,6 @@
 #include "vector.h"
 #include "ray.h"
 #include "util.h"
-#include "texture.h"
 
 #include <random>
 #include <ctime>
@@ -15,8 +14,7 @@ enum MaterialType { DIFF, SPEC, EMIT };
 
 class Material 
 {
-private:
-	Texture texture;
+
 public:
 	MaterialType type;
 	Vec3f color;
@@ -29,14 +27,6 @@ public:
 	MaterialType get_type() const { return type; }
 	Vec3f get_emission() const { return emission; }
 	Vec3f get_color() const { return color; }
-
-	// Get color at UV coordinates u,v
-	Vec3f get_uvcolor(double u, double v) {
-		if (texture.isload())
-			return texture.getcolor(u, v);
-		else
-			return color;
-	}
 
 	Ray get_reflected_ray(const Ray &ray, Vec3f &hitpoint, const Vec3f &norm) const {
 		static std::default_random_engine generator(time(0)+1);

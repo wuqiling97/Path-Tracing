@@ -9,6 +9,7 @@
 #include "material.h"
 #include "util.h"
 #include "aabbox.h"
+#include "texture.h"
 
 using std::cout; using std::endl;
 
@@ -28,9 +29,20 @@ struct ObjectIntersection
 
 class Object 
 {
-public:
+protected:
+	Texture m_texture;
+	Material m_material;	// Material
 	Vec3f m_pos; // Position
-	Object(Vec3f pos) : m_pos(pos) {}
+public:
+	// Get color at UV coordinates u,v
+	Vec3f get_uvcolor(double u, double v) {
+		if (m_texture.isload())
+			return m_texture.getcolor(u, v);
+		else
+			return m_material.color;
+	}
+	Object(Vec3f pos, Material material, std::string texpath) : 
+		m_pos(pos), m_material(material), m_texture(Texture(texpath)){}
 	virtual ObjectIntersection get_intersection(const Ray &r) = 0;
 };
 
@@ -39,11 +51,10 @@ class Sphere : public Object
 {
 private:
 	double m_radius;	// Radius
-	Material m_material;	// Material
 
 public:
-	Sphere(Vec3f pos_, double radius_, Material material_) :
-		Object(pos_), m_radius(radius_), m_material(material_) {}
+	Sphere(Vec3f pos_, double radius_, Material material_, std::string texpath_ = "") :
+		Object(pos_, material_, texpath_), m_radius(radius_) {}
 
 	double get_radius() { return m_radius; }
 	Material get_material() { return m_material; }
@@ -93,11 +104,10 @@ class Bezier : public Object
 {
 private:
 	std::vector<Eigen::Vector3d> m_points; // 相对m_pos的坐标
-	Material m_material;
 	AABBox box;
 public:
-	Bezier(Vec3f pos, Eigen::Vector3d points[], Material material) : 
-		Object(pos), m_material(material)  {
+	Bezier(Vec3f pos, Eigen::Vector3d points[], Material material, std::string texpath = "") : 
+		Object(pos, material, texpath), m_material(material)  {
 		using Eigen::Vector3d;
 
 		std::vector<Vector3d> boxpts;
