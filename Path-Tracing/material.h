@@ -2,12 +2,11 @@
 
 #include "vector.h"
 #include "ray.h"
+#include "util.h"
 #include <random>
 #include <ctime>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+
 
 enum MaterialType { DIFF, SPEC, EMIT };
 
