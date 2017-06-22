@@ -6,9 +6,9 @@ using std::cout; using std::cin; using std::endl;
 
 // 使用的坐标系: x向右, y向上, z向前
 
-#define private public
-#include "objects.h"
-#include "aabbox.h"
+//#define private public
+//#include "objects.h"
+//#include "aabbox.h"
 
 #include "vector.h"
 #include "camera.h"
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 		Vector3d(0.145, 1.934, 0),
 		Vector3d(0.184, 3.382, 0)
 	};
-	scene.add(new Bezier<3>(Vec3f(0, 0, 0), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
+	scene.add(new Bezier<3>(Vec3f(0.5, 0, 0.4), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
 
 	//Ray ray = camera.get_ray(202, 184, 0);
 	//cout<<ray.origin<<' '<<ray.direction<<endl;

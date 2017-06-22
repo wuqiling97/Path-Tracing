@@ -9,6 +9,7 @@ images/
 *.txt
 *.ppm
 *.props
+*.user
 
 
 # Prerequisites

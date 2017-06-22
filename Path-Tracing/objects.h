@@ -219,7 +219,6 @@ public:
 
 		if (ishit && t > eps && u >= 0 && u <= 1) {
 			hitp += m_pos;
-			//normal = normal + m_pos;
 			return ObjectIntersection(true, t, normal, hitp, m_material);
 		} else
 			return ObjectIntersection(false);

@@ -6,8 +6,6 @@
 #include "util.h"
 #include <fstream>
 
-// Clamp double to min/max of 0/1
-inline double clamp(double x) { return x<0 ? 0 : x>1 ? 1 : x; }
 // Clamp to between 0-255
 inline int toInt(double x) { return int(clamp(x) * 255 + .5); }
 
