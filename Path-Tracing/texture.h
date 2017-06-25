@@ -43,12 +43,12 @@ public:
 	inline bool isload() { return loaded; }
 	Vec3f getcolor(double u, double v) {
 		//myassert(loaded);
-		int i = round(clamp(u) * (width-1));
-		int j = round(clamp(v) * (height-1));
-		if (i >= 0 && i < width && j >= 0 && j < height) {
-			return pixels[i*width + j];
+		int x = round(clamp(u) * (width-1));
+		int y = round(clamp(v) * (height-1));
+		if (x >= 0 && x < width && y >= 0 && y < height) {
+			return pixels[y*width + x];
 		} else {
-			printf("error with uv, yx: %.7lf, %.7lf - %i, %i (width, height: %i, %i) \n", u, v, i, j, width, height);
+			printf("error with uv, yx: %.7lf, %.7lf - %i, %i (width, height: %i, %i) \n", u, v, x, y, width, height);
 			return Vec3f(0, 1, 0);
 		}
 

@@ -28,13 +28,15 @@ public:
 		double samples_inv = 1. / samples;
 
 		// Main Loop
-#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
+//#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
 		for (int y = 0; y<height; y++) {             // Stores seed for erand48
 
 			fprintf(stderr, "\rRendering (%i samples): %.2f%% ",      // Prints
 				samples, (double)y / height * 100);                   // progress
 
 			for (int x = 0; x<width; x++) {
+				if(!(295<=x && x<=733 && y<=89))
+					continue;
 				Vec3f color = Vec3f();
 
 				for (int a = 0; a<samples; a++) {

@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 using std::cout; using std::cin; using std::endl;
 
 // 使用的坐标系: x向右, y向上, z向前
@@ -26,6 +27,8 @@ int main(int argc, char* argv[])
 {
 	using Eigen::Vector3d;
 
+	std::ifstream fin("config.txt");
+
 	clock_t timestart = clock();
 
 	int samples = 10;
@@ -33,24 +36,30 @@ int main(int argc, char* argv[])
 
 	//test();
 
-	Camera camera = Camera(Vec3f(0, 2, 5), Vec3f(0, 0, -1), 640, 360);     // Create camera
+	int w, h;
+	fin>>w>>h;
+	printf("width: %d  height: %d\n", w, h);
+	Camera camera = Camera(Vec3f(0, 4.3, 6), Vec3f(0, -0.26, -1), w, h);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
 	// Add objects to scene
-	scene.add(new Sphere(Vec3f(0, -1000, 0), 1000, Material()));
-	scene.add(new Sphere(Vec3f(-1004, 0, 0), 1000, Material(DIFF, Vec3f(0.85, 0.4, 0.4))));
-	scene.add(new Sphere(Vec3f(1004, 0, 0) , 1000, Material(DIFF, Vec3f(0.4, 0.4, 0.85))));
-	scene.add(new Sphere(Vec3f(0, 0, -1006), 1000, Material()));
-	scene.add(new Sphere(Vec3f(0, 110, 0)  , 100 , Material(EMIT, Vec3f(1, 1, 1), Vec3f(2.2, 2.2, 2.2))));
-	scene.add(new Sphere(Vec3f(-1.7, 1, 0)   , 1   , Material(SPEC, Vec3f(1, 1, 1)), "tex/marble.jpg"));
-	scene.add(new Sphere(Vec3f(1.7, 0.7, -0.5) , 0.7   , Material(DIFF, Vec3f(1, 1, 1))));
+	scene.add(new Sphere(Vec3f(0, -1e5, 0), 1e5, Material(DIFF, Vec3f(0.8, 0.8, 0.8)))); //bottom
+	scene.add(new Sphere(Vec3f(-(1e5+4), 0, 0), 1e5, Material(DIFF, Vec3f(0.85, 0.4, 0.4)))); //left
+	scene.add(new Sphere(Vec3f(1e5+4, 0, 0) , 1e5, Material(DIFF, Vec3f(0.4, 0.4, 0.85)))); //right
+	scene.add(new Sphere(Vec3f(0, 0, -(1e5+4)), 1e5, Material(DIFF, Vec3f(0.8, 0.8, 0.8)))); //back
+	double top = 6;
+	scene.add(new Sphere(Vec3f(0, 1e5 + top, 0), 1e5, Material(DIFF, Vec3f(0.8, 0.8, 0.8)))); //top
+	int lighth = 100;
+	scene.add(new Sphere(Vec3f(0, lighth + top - 0.015, 0)  , lighth , Material(EMIT, Vec3f(1, 1, 1), Vec3f(7,7,7)))); //light
+	scene.add(new Sphere(Vec3f(-1.7, 1.3, -1)   , 1.3   , Material(SPEC, Vec3f(0.8, 0.8, 0.8)), "tex/marble.jpg"));
+	scene.add(new Sphere(Vec3f(2, 1, -0.5) , 1   , Material(DIFF, Vec3f(1, 1, 1)), "tex/orange.jpg"));
 	Vector3d pts[4] = {
 		Vector3d(0.338, 0.000, 0),
 		Vector3d(1.600, 1.523, 0),
 		Vector3d(0.000, 1.862, 0),
 		Vector3d(0.446, 3.385, 0)
 	};
-	scene.add(new Bezier<3>(Vec3f(0.5, 0, 0.4), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
+	scene.add(new Bezier<3>(Vec3f(0.4, 0, 0.4), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
 
 	//Ray ray = camera.get_ray(202, 184, 0);
 	//cout<<ray.origin<<' '<<ray.direction<<endl;
