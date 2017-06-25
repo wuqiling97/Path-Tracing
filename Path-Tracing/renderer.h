@@ -26,28 +26,28 @@ public:
 		int width = m_camera->width;
 		int height = m_camera->height;
 		double samples_inv = 1. / samples;
+		int subsamples = samples/(ssaalen*ssaalen);
 
 		// Main Loop
-//#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
+#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
 		for (int y = 0; y<height; y++) {             // Stores seed for erand48
 
 			fprintf(stderr, "\rRendering (%i samples): %.2f%% ",      // Prints
-				samples, (double)y / height * 100);                   // progress
+				subsamples*(ssaalen*ssaalen), (double)y / height * 100);                   // progress
 
 			for (int x = 0; x<width; x++) {
-				if(!(295<=x && x<=733 && y<=89))
-					continue;
 				Vec3f color = Vec3f();
 
-				for (int a = 0; a<samples; a++) {
-					Ray ray = m_camera->get_ray(x, y, a>0);
-					color = color + m_scene->trace_ray(ray, 0);
+				for (int a = 0; a<subsamples; a++) {
+					// SSAA
+					for (int sx = 0; sx < ssaalen; sx++)
+						for (int sy = 0; sy < ssaalen; sy++) {
+							Ray ray = m_camera->get_ray(x + (sx + 0.5) / ssaalen, y + (sy + 0.5) / ssaalen, a>0);
+							color = color + m_scene->trace_ray(ray, 0);
+						}
 				}
 
 				m_pixel_buffer[(y)*width + x] = color * samples_inv;
-
-				/*if(abs(x-320)<=1 && abs(y-180)<=1)
-					m_pixel_buffer[(y)*width + x] = Vec3f(1, 0, 0);*/
 			}
 		}
 	}

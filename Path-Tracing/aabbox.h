@@ -53,7 +53,6 @@ public:
 		/*cout<<"ti max\n"<<diffmax<<endl
 			<<"ti min\n"<<diffmin<<endl;
 		cout<<tmax<<' '<<tmin<<endl;*/
-		const double eps = 1e-4;
 		if (tmin < tmax) {
 			if(tmin > eps)
 				return tmin;

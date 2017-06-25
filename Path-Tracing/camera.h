@@ -28,18 +28,26 @@ public:
 		m_height_inv = 1. / height;
 		m_ratio = (double)width / height;
 
-		// 计算与视线垂直的2个方向单位向量
-		m_x_direction = m_direction.cross(Vec3f(0, 1, 0)).norm();
+		// 计算与视线垂直的2个方向向量, 长度为 x: w/h, y: 1
+		m_x_direction = m_direction.cross(Vec3f(0, 1, 0)).norm() * 
+			(double(width) / double(height));
 		m_y_direction = m_x_direction.cross(m_direction).norm();
 
 		m_spacing = 2.0 / (double)height;
 		m_spacing_half = m_spacing * 0.5;
 	}
+	inline float convert_rand(float num) {
+		if (num >= 0)
+			return 1 - sqrt(num);
+		else
+			return sqrt(-num) - 1;
+	}
 	// Returns ray from camera origin through pixel at x,y
-	Ray get_ray(int x, int y, bool jitter)
+	Ray get_ray(double x, double y, bool jitter)
 	{
 		static std::default_random_engine generator(time(0));
-		static std::uniform_real_distribution<double> uni(-2, 2);
+		const double range = 1./ssaalen;
+		static std::uniform_real_distribution<double> uni(-range, range);
 
 		double x_jitter;
 		double y_jitter;
@@ -47,16 +55,16 @@ public:
 		// If jitter == true, jitter point for anti-aliasing
 		if (jitter) {
 			// [-1, 1]/width
-			x_jitter = uni(generator) * m_spacing_half;
-			y_jitter = uni(generator) * m_spacing_half;
+			x_jitter = convert_rand(uni(generator));
+			y_jitter = convert_rand(uni(generator));
 		} else {
 			x_jitter = 0;
 			y_jitter = 0;
 		}
 
 		Vec3f raydir = m_direction*1.6 + (
-			(2 * x*m_width_inv - 1 + x_jitter) * m_ratio * m_x_direction +
-			(1 - 2 * y*m_height_inv + y_jitter) * m_y_direction);
+			((x + x_jitter) * 2*m_width_inv - 1) * m_x_direction +
+			(1 - (y + y_jitter) * 2*m_height_inv) * m_y_direction);
 
 		return Ray(m_position, raydir.norm());
 	}

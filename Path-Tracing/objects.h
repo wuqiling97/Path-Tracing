@@ -66,7 +66,7 @@ public:
 		Vec3f n = Vec3f();
 
 		Vec3f l = m_pos - ray.origin;
-		double t, eps = 1e-4;
+		double t;
 		double tp = l.dot(ray.direction), det = m_radius*m_radius - (l.dot(l) - tp*tp);
 		if (det<0) // center, ray distance > r
 			return ObjectIntersection(false);
@@ -92,9 +92,11 @@ public:
 			n = (hitpoint - m_pos).norm();
 			if(inside) n = -n;
 
-			double u = atan((hitpoint.y - m_pos.y) / (hitpoint.x - m_pos.x)) / M_PI + 0.5;
-			double v = asin(clamp((hitpoint.z - m_pos.z) / m_radius)) / M_PI + 0.5;
-			m_material.color = get_uvcolor(u, v);
+			if (m_texture.isload()) {
+				double u = atan((hitpoint.y - m_pos.y) / (hitpoint.x - m_pos.x)) / M_PI + 0.5;
+				double v = asin(clamp((hitpoint.z - m_pos.z) / m_radius)) / M_PI + 0.5;
+				m_material.color = get_uvcolor(u, v);
+			}
 
 			return ObjectIntersection(hit, distance, n, hitpoint, m_material);
 		} else
@@ -184,7 +186,6 @@ public:
 			v = atan(y/x) + M_PI;
 		}
 
-		double eps = 1e-4;
 		Matrix3d Jmat; // jacobi matrix
 		Vector3d fvalue; //f(t, u, v) = S(u, v)-C(t)
 		bool ishit = false;
