@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <Eigen/Dense>
 using std::cout; using std::cin; using std::endl;
 
 // 使用的坐标系: x向右, y向上, z向前
@@ -16,22 +17,54 @@ using std::cout; using std::cin; using std::endl;
 #include "scene.h"
 #include "renderer.h"
 
-void test()
+void write_obj(Bezier<3> obj)
 {
-	Vec3f a = Vec3f(1, 2, 3);
-	cout<<2*a;
+	using namespace Eigen;
+	// 存储控制点
+	std::vector<Vector3d> points(0);          // 存储点
+	std::vector<Vector4i> meshes(0);            // 存储面
+	int nu = 100, nv = 100;   // 密度应该“除”得整
+	double du = 1./nu, dv = 2*M_PI/nv;             // 自定义密度
+
+	int pid = 0;                            // 点序号
+	double epsilon = 1e-6;
+	for (int i = 0; i<nu; i++) {
+		for (int j = 0; j<nv; j++) {
+			double u = double(i) / nu, v = double(j) / nv * 2*M_PI;
+			Vector3d tmp = obj.get_point(u);
+			Vector3d point = Vector3d(tmp.x()*sin(v), tmp.y(), tmp.x() * cos(v));
+			points.push_back(point);          // 写递归或者DP搞定函数P的计算
+			pid++;                              // OBJ格式网格序号从1开始
+			if (i != 0 && j != 0) {
+				meshes.push_back(Vector4i(pid - nv - 1, pid - nv, pid, pid - 1));
+			}
+			if (j==nv-1 && i!=0) {
+				meshes.push_back(Vector4i(pid-nv, pid-2*nv+1, pid-nv+1, pid));
+			}
+		}
+	}
+	//assert(points.size()==meshes.size());
+	FILE* fp = fopen("bezier.obj", "w");
+	for(Vector3d pt: points)
+		fprintf(fp, "v %f %f %f\n", pt.x(), pt.y(), pt.z());
+	for(Vector4i face: meshes)
+		fprintf(fp, "f %d %d %d %d\n", face[0], face[1], face[2], face[3]);
 }
 
 
 int main(int argc, char* argv[])
 {
+	if (argc != 2) {
+		printf("usage: <this.exe> <sample time: int>\n");
+		return 0;
+	}
 	using Eigen::Vector3d;
 
 	std::ifstream fin("config.txt");
 
 	clock_t timestart = clock();
 
-	int samples = 10;
+	int samples = 100;
 	if(argc==2) samples = atoi(argv[1]);
 
 	//test();
@@ -59,16 +92,10 @@ int main(int argc, char* argv[])
 		Vector3d(0.000, 1.862, 0),
 		Vector3d(0.446, 3.385, 0)
 	};
-	scene.add(new Bezier<3>(Vec3f(0.4, 0, 0.4), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4))));
+	Bezier<3> vase = Bezier<3>(Vec3f(0.4, 0, 0.4), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4)));
+	scene.add(&vase);
 
-	//Ray ray = camera.get_ray(202, 184, 0);
-	//cout<<ray.origin<<' '<<ray.direction<<endl;
-	//
-	//Bezier<3> obj = Bezier<3>(Vec3f(0, 0, 0), pts, Material(SPEC, Vec3f(0.4, 0.85, 0.4)));
-	//ObjectIntersection inter =  obj.get_intersection(ray);
-	//cout<<"\nintersection info\n";
-	//cout<<inter.hit<<' '<<inter.t<<endl
-	//	<<inter.hitp<<' '<<inter.n<<endl;
+	write_obj(vase);
 
 
 	Renderer renderer = Renderer(&scene, &camera);  // Create renderer with our scene and camera
